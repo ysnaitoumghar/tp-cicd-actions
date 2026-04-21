@@ -3,16 +3,29 @@ name: CI - Build & Test
 on:
   push:
     branches: [ main ]
+
   pull_request:
     branches: [ main ]
+
   workflow_call:
+
+  schedule:
+    - cron: '0 2 * * *'
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+
     strategy:
       matrix:
         node-version: [18, 20, 22]
+
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
